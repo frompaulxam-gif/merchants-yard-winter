@@ -22,32 +22,19 @@ if(location.pathname===sitePath('/')){
  const map={about:'/visit/',reservations:'/book/',events:'/whats-on/',drinksmenu:'/menus/',cocktailmenu:'/cocktailmenu/',hire:'/private-hire/',faqs:'/visit/#faqs',signup:'/signup/',gallery:'/gallery/'};
  const dest=map[location.hash.slice(1).toLowerCase()];if(dest)location.replace(sitePath(dest));
 }
-// Winter atmosphere: no pointer interception; persistent pause; offscreen pause.
-const video=$('.hero-video');
+// Quiet seasonal motion over a genuine venue still. Never loads video.
 const snow=$('.snow'),toggle=$('.motion-toggle'),motion=matchMedia('(prefers-reduced-motion:reduce)');
 if(snow&&toggle){
- let paused=false;try{paused=localStorage.getItem('my-snow')==='off';}catch{}
- const seasonal=snow.dataset.winter==='true';let visible=true;
- for(let i=0;i<34;i++){const flake=document.createElement('i');flake.style.cssText=`--left:${(i*37.17)%100}%;--duration:${10+(i%9)}s;--delay:-${i%19}s;--opacity:${.2+(i%5)*.1};--drift:${(i%2?1:-1)*(25+i*3)}px;width:${2+i%4}px;height:${2+i%4}px;`;snow.append(flake);}
- function update(){
-  const off=motion.matches,stopped=paused||!visible||document.hidden||off;
-  snow.classList.toggle('off',off||!seasonal);snow.classList.toggle('paused',stopped);
-  toggle.hidden=off;toggle.textContent=paused?'Play motion':'Pause motion';toggle.setAttribute('aria-pressed',String(paused));
-  if(video){
-   video.hidden=off;
-   if(stopped)video.pause();
-   else if(!navigator.connection?.saveData||video.dataset.userPlay==='true'){
-    if(!video.getAttribute('src')){video.src=matchMedia('(max-width:700px) and (orientation:portrait)').matches?video.dataset.mobile:video.dataset.desktop;video.muted=true;}
-    video.play().catch(()=>{video.classList.remove('is-playing');});
-   }
-  }
- }
- video?.addEventListener('playing',()=>{video.classList.add('is-playing');if(paused||motion.matches||!visible||document.hidden)video.pause();});
- video?.addEventListener('error',()=>video.classList.remove('is-playing'));
- toggle.addEventListener('click',()=>{paused=!paused;if(video&&!paused)video.dataset.userPlay='true';try{localStorage.setItem('my-snow',paused?'off':'on');}catch{}update();});
- new IntersectionObserver(entries=>{visible=entries[0].isIntersecting;update();},{threshold:0}).observe($('.hero'));
+ let paused=false,visible=true;try{paused=localStorage.getItem('my-snow')==='off';}catch{}
+ for(let i=0;i<22;i++){const flake=document.createElement('i');flake.style.cssText=`--left:${Math.random()*100}%;--duration:${12+Math.random()*12}s;--delay:${-Math.random()*24}s;--drift:${Math.random()*70-35}px;--opacity:${.2+Math.random()*.3}`;snow.append(flake);}
+ function update(){const enabled=snow.dataset.winter==='true'&&!motion.matches;snow.classList.toggle('off',!enabled);snow.classList.toggle('paused',paused||!visible||document.hidden);toggle.hidden=!enabled;toggle.setAttribute('aria-pressed',String(paused));toggle.textContent=paused?'Play snow':'Pause snow';}
+ toggle.addEventListener('click',()=>{paused=!paused;try{localStorage.setItem('my-snow',paused?'off':'on');}catch{}update();});
+ new IntersectionObserver(entries=>{visible=entries[0].isIntersecting;update();}).observe($('.hero'));
  motion.addEventListener('change',update);document.addEventListener('visibilitychange',update);update();
 }
+const header=$('.site-header');
+function updateHeader(){header?.classList.toggle('is-scrolled',window.scrollY>35);}
+window.addEventListener('scroll',updateHeader,{passive:true});updateHeader();
 const escapeHtml=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const menuData=$('#menu-data');
 if(menuData){
@@ -63,7 +50,7 @@ if($('#event-month')){let category='All';function filterEvents(){const month=$('
  $$('[data-event-filter]').forEach(b=>b.addEventListener('click',()=>{category=b.dataset.eventFilter;$$('[data-event-filter]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));filterEvents();}));$('#event-month').addEventListener('change',filterEvents);$('#show-past').addEventListener('change',filterEvents);filterEvents();}
 $$('[data-ended-date]').forEach(el=>{if(el.dataset.endedDate<today){el.hidden=false;const action=$('[data-event-action-date]');if(action)action.innerHTML=`<a class="button" href="${sitePath('/whats-on/')}">See upcoming events <span aria-hidden="true">↗</span></a>`;}});
 // Replace homepage upcoming rows from the same maintained event data when dates roll forward.
-if($('[data-home-events]'))fetch(sitePath('/assets/event-data.json')).then(r=>r.ok?r.json():Promise.reject()).then(events=>{const future=events.filter(e=>e.date>=today).slice(0,3);const container=$('[data-home-events]');container.innerHTML=future.map(e=>{const d=new Date(e.date+'T12:00:00Z');return `<a class="event-row" href="${sitePath('/whats-on/')}${escapeHtml(e.slug)}/"><time datetime="${e.date}"><strong>${d.getUTCDate()}</strong><span>${d.toLocaleString('en-GB',{month:'short',timeZone:'Europe/London'})}</span></time><div class="event-row-text"><span class="event-type">${escapeHtml(e.category)} · ${escapeHtml(e.time)}</span><h3>${escapeHtml(e.title)}</h3></div><span class="row-arrow" aria-hidden="true">↗</span></a>`;}).join('')||`<p class="empty-state">New dates are on their way. <a href="${sitePath('/signup/')}">Stay in the loop</a> for the next programme.</p>`;}).catch(()=>{});
+if($('[data-home-events]'))fetch(sitePath('/assets/event-data.json')).then(r=>r.ok?r.json():Promise.reject()).then(events=>{const future=events.filter(e=>e.date>=today).slice(0,4);const container=$('[data-home-events]');container.innerHTML=future.map(e=>{const d=new Date(e.date+'T12:00:00Z');return `<a class="event-row" href="${sitePath('/whats-on/')}${escapeHtml(e.slug)}/"><time datetime="${e.date}"><strong>${d.getUTCDate()}</strong><span>${d.toLocaleString('en-GB',{month:'short',timeZone:'Europe/London'})}</span></time><div class="event-row-text"><span class="event-type">${escapeHtml(e.category)} · ${escapeHtml(e.time)}</span><h3>${escapeHtml(e.title)}</h3></div><span class="row-arrow">Find out more</span></a>`;}).join('')||`<p class="empty-state">New dates are on their way. <a href="${sitePath('/signup/')}">Stay in the loop</a> for the next programme.</p>`;}).catch(()=>{});
 $('#load-booking')?.addEventListener('click',e=>{const b=e.currentTarget,frame=document.createElement('iframe');frame.src=b.dataset.src;frame.title='Reserve a table at The Winter Tipi, Merchants Yard';frame.setAttribute('loading','eager');$('#booking-embed').replaceChildren(frame);b.textContent='Booking calendar opened';b.disabled=true;frame.addEventListener('load',()=>{$('#booking-embed').setAttribute('aria-label','ResDiary reservation calendar');});});
 $('#hire-form')?.addEventListener('submit',e=>{e.preventDefault();const form=e.currentTarget;if(!form.reportValidity())return;const data=new FormData(form);const body=`Hello Merchants Yard,\n\nI'd like to enquire about private hire.\n\nName: ${data.get('name')}\nEmail: ${data.get('email')}\nPreferred date: ${data.get('date')}\nApproximate guests: ${data.get('guests')}\n\n${data.get('message')}\n\nThank you!`;location.href='mailto:merchantsyardlc@gmail.com?subject='+encodeURIComponent('Winter Tipi private hire enquiry')+'&body='+encodeURIComponent(body);$('#hire-status').textContent='Your email app should open with your enquiry. Review it there and press Send when ready. If it does not open, email merchantsyardlc@gmail.com directly.';});
 $$('[data-photo]').forEach(b=>b.addEventListener('click',()=>{const image=$('img',b);$('#detail-content').innerHTML=`<div class="gallery-lightbox"><img src="${escapeHtml(image.src)}" alt="${escapeHtml(image.alt)}"><p id="detail-title">${escapeHtml(image.alt)}</p></div>`;openDialog(detail);}));
