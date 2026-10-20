@@ -22,11 +22,11 @@ if(location.pathname===sitePath('/')){
  const map={about:'/visit/',reservations:'/book/',events:'/whats-on/',drinksmenu:'/menus/',cocktailmenu:'/cocktailmenu/',hire:'/private-hire/',faqs:'/visit/#faqs',signup:'/signup/',gallery:'/gallery/'};
  const dest=map[location.hash.slice(1).toLowerCase()];if(dest)location.replace(sitePath(dest));
 }
-// Quiet seasonal motion over a genuine venue still. Never loads video.
+// Visible layered snowfall over a genuine venue still. Never loads video.
 const snow=$('.snow'),toggle=$('.motion-toggle'),motion=matchMedia('(prefers-reduced-motion:reduce)');
 if(snow&&toggle){
  let paused=false,visible=true;try{paused=localStorage.getItem('my-snow')==='off';}catch{}
- for(let i=0;i<22;i++){const flake=document.createElement('i');flake.style.cssText=`--left:${Math.random()*100}%;--duration:${12+Math.random()*12}s;--delay:${-Math.random()*24}s;--drift:${Math.random()*70-35}px;--opacity:${.2+Math.random()*.3}`;snow.append(flake);}
+ for(let i=0;i<72;i++){const flake=document.createElement('i');flake.style.cssText=`--left:${Math.random()*100}%;--size:${3+Math.random()*4}px;--duration:${8+Math.random()*10}s;--delay:${-Math.random()*24}s;--drift:${Math.random()*140-70}px;--opacity:${.65+Math.random()*.3}`;snow.append(flake);}
  function update(){const enabled=snow.dataset.winter==='true'&&!motion.matches;snow.classList.toggle('off',!enabled);snow.classList.toggle('paused',paused||!visible||document.hidden);toggle.hidden=!enabled;toggle.setAttribute('aria-pressed',String(paused));toggle.textContent=paused?'Play snow':'Pause snow';}
  toggle.addEventListener('click',()=>{paused=!paused;try{localStorage.setItem('my-snow',paused?'off':'on');}catch{}update();});
  new IntersectionObserver(entries=>{visible=entries[0].isIntersecting;update();}).observe($('.hero'));
