@@ -27,3 +27,39 @@ footer{padding:60px max(24px,calc((100vw - 1240px)/2)) 24px;border-top:1px solid
 }
 @media(max-width:370px){.hero-copy .button{min-width:0;font-size:8px;padding-inline:17px}.hero-copy h1{font-size:40px}.hero-copy .eyebrow{font-size:8px}.form-row{grid-template-columns:1fr}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{animation:none!important;transition:none!important}.snow{display:none}}
+
+/* Poster-led programme, following Moonshine's month-grouped event grid. */
+.menu-group h2{font-weight:700}
+.event-programme{padding-top:32px}
+.events-toolbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:18px;padding:20px 0;border-block:1px solid var(--line)}
+.events-toolbar .filter-tabs{padding:0;flex-wrap:wrap;overflow:visible}
+.events-tools{display:flex;flex-wrap:wrap;align-items:center;gap:12px}
+.event-search{width:185px}.events-tools input,.events-tools select{min-height:44px;font-size:12px}
+.view-switch{display:flex;gap:3px;border:1px solid var(--line);border-radius:999px;padding:3px}
+.view-switch button{border:0;border-radius:999px;background:transparent;padding:11px 17px;min-height:38px;font:600 11px var(--body);white-space:nowrap}
+.view-switch button[aria-pressed=true]{background:var(--cream);color:var(--paper)}
+.event-results{display:flex;align-items:center;justify-content:space-between;gap:20px;margin:17px 0 27px}
+.event-results .result-count{padding:0}.event-results .past-toggle{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--muted)}
+.month-heading{font:500 13px var(--body);letter-spacing:.15em;color:var(--gold);border-bottom:1px solid var(--line);padding-bottom:15px;margin-bottom:25px}
+.event-month-group+.event-month-group{margin-top:54px}
+.events-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:42px 28px}
+.event-card{min-width:0;display:flex;flex-direction:column;gap:20px}
+.event-card-media{display:block;aspect-ratio:4/5;background:#30221b;overflow:hidden}
+main img.event-poster{filter:none;object-fit:contain;width:100%;height:100%}
+.event-card-media:hover{outline:1px solid var(--gold);outline-offset:4px}
+.event-card-copy{display:flex;flex-direction:column;gap:11px;flex:1}
+.event-card time{color:var(--gold);font:600 10px var(--body);letter-spacing:.12em;text-transform:uppercase}
+.event-card h3{font-size:clamp(25px,2.35vw,34px);line-height:1.13}
+.event-card h3 a:hover{color:var(--gold)}
+.event-card p+p{margin:0}.event-card-type{align-self:flex-start;border:1px solid var(--line);border-radius:999px;padding:4px 10px;font-size:9px;text-transform:uppercase;letter-spacing:.1em}
+.event-card-time{font-size:11px;color:var(--gold)}
+.event-card-description{font-size:13px;line-height:1.7;color:var(--muted)}
+.event-card-actions{display:flex;align-items:center;flex-wrap:wrap;gap:10px 16px;margin-top:auto;padding-top:12px}
+.event-card-actions .button{font-size:9px;min-height:43px;padding:12px 18px;letter-spacing:.08em}
+.event-card-actions .text-link{font-size:9px}.event-card-ended{font-size:12px;color:var(--muted)}
+.event-detail-grid>div>img.event-poster{height:auto;max-height:none;aspect-ratio:4/5;object-fit:contain}
+.event-catalogue[data-view=list] .events-grid{grid-template-columns:1fr;gap:0}
+.event-catalogue[data-view=list] .event-card{display:grid;grid-template-columns:180px 1fr;gap:30px;padding:25px 0;border-bottom:1px solid var(--line)}
+.event-catalogue[data-view=list] .event-card h3{font-size:32px}.event-catalogue[data-view=list] .event-card-description{max-width:68ch}
+@media(max-width:1000px){.events-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.events-tools{flex:1}.event-search{flex:1;min-width:150px}.event-card h3{font-size:30px}}
+@media(max-width:640px){.event-programme{padding-top:20px}.events-toolbar{gap:18px;padding-block:17px}.events-toolbar .filter-tabs{gap:7px}.events-tools{gap:10px;width:100%}.event-search{flex-basis:100%;width:100%}.events-tools>label:not(.event-search){flex:1}.events-tools select{width:100%}.view-switch button{padding:11px 13px}.events-grid{grid-template-columns:1fr;gap:40px}.event-results{gap:12px;margin-block:20px 28px}.event-results .past-toggle{font-size:10px}.month-heading{font-size:12px}.event-card{gap:19px}.event-card h3{font-size:31px}.event-card-description{font-size:13px}.event-card-actions .button{min-height:44px}.event-catalogue[data-view=list] .event-card{grid-template-columns:90px 1fr;gap:17px;align-items:start}.event-catalogue[data-view=list] .event-card h3{font-size:24px}.event-catalogue[data-view=list] .event-card time{font-size:9px}.event-catalogue[data-view=list] .event-card-description{display:none}.event-catalogue[data-view=list] .event-card-actions{gap:8px}.event-catalogue[data-view=list] .event-card-actions .button{font-size:8px;padding-inline:13px}}

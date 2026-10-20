@@ -46,8 +46,20 @@ if(menuData){
 // Compare ISO dates in the venue's timezone, not UTC or the visitor's timezone.
 function venueToday(){return new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/London',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());}
 const today=venueToday();
-if($('#event-month')){let category='All';function filterEvents(){const month=$('#event-month').value,showPast=$('#show-past').checked;let count=0;$$('.event-list-full .event-row').forEach(row=>{const ok=(category==='All'||row.dataset.category===category)&&(month==='all'||row.dataset.eventDate.startsWith(month))&&(showPast||row.dataset.eventDate>=today);row.hidden=!ok;if(ok)count++;});$('#event-count').textContent=`${count} ${count===1?'event':'events'}`;$('#events-empty').hidden=count!==0;}
- $$('[data-event-filter]').forEach(b=>b.addEventListener('click',()=>{category=b.dataset.eventFilter;$$('[data-event-filter]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));filterEvents();}));$('#event-month').addEventListener('change',filterEvents);$('#show-past').addEventListener('change',filterEvents);filterEvents();}
+if($('#event-month')){
+ let category='All';
+ function filterEvents(){
+  const month=$('#event-month').value,showPast=$('#show-past').checked,query=$('#event-search').value.trim().toLowerCase();let count=0;
+  $$('.event-card').forEach(card=>{const ok=(category==='All'||card.dataset.categories.split('|').includes(category))&&(month==='all'||card.dataset.eventDate.startsWith(month))&&(showPast||card.dataset.eventDate>=today)&&card.dataset.search.includes(query);card.hidden=!ok;if(ok)count++;});
+  $$('.event-month-group').forEach(group=>{group.hidden=!$$('.event-card',group).some(card=>!card.hidden);});
+  $('#event-count').textContent=`${count} ${count===1?'event':'events'}`;$('#events-empty').hidden=count!==0;
+ }
+ $$('[data-card-actions-date]').forEach(el=>{if(el.dataset.cardActionsDate<today)el.innerHTML=`<span class="event-card-ended">This event has ended</span>`;});
+ $$('[data-event-filter]').forEach(b=>b.addEventListener('click',()=>{category=b.dataset.eventFilter;$$('[data-event-filter]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));filterEvents();}));
+ $('#event-month').addEventListener('change',filterEvents);$('#show-past').addEventListener('change',filterEvents);$('#event-search').addEventListener('input',filterEvents);
+ $$('[data-event-view]').forEach(b=>b.addEventListener('click',()=>{$('.event-catalogue').dataset.view=b.dataset.eventView;$$('[data-event-view]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));}));
+ filterEvents();
+}
 $$('[data-ended-date]').forEach(el=>{if(el.dataset.endedDate<today){el.hidden=false;const action=$('[data-event-action-date]');if(action)action.innerHTML=`<a class="button" href="${sitePath('/whats-on/')}">See upcoming events <span aria-hidden="true">↗</span></a>`;}});
 // Replace homepage upcoming rows from the same maintained event data when dates roll forward.
 if($('[data-home-events]'))fetch(sitePath('/assets/event-data.json')).then(r=>r.ok?r.json():Promise.reject()).then(events=>{const future=events.filter(e=>e.date>=today).slice(0,4);const container=$('[data-home-events]');container.innerHTML=future.map(e=>{const d=new Date(e.date+'T12:00:00Z');return `<a class="event-row" href="${sitePath('/whats-on/')}${escapeHtml(e.slug)}/"><time datetime="${e.date}"><strong>${d.getUTCDate()}</strong><span>${d.toLocaleString('en-GB',{month:'short',timeZone:'Europe/London'})}</span></time><div class="event-row-text"><span class="event-type">${escapeHtml(e.category)} · ${escapeHtml(e.time)}</span><h3>${escapeHtml(e.title)}</h3></div><span class="row-arrow">Find out more</span></a>`;}).join('')||`<p class="empty-state">New dates are on their way. <a href="${sitePath('/signup/')}">Stay in the loop</a> for the next programme.</p>`;}).catch(()=>{});
